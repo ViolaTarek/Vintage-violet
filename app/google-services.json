@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "471124282212",
+    "firebase_url": "https://vintage-violet.firebaseio.com",
+    "project_id": "vintage-violet",
+    "storage_bucket": "vintage-violet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471124282212:android:8f88f7b8aac95a93",
+        "android_client_info": {
+          "package_name": "com.example.viola.vintageviolet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "471124282212-brmsiivmu64rp2lcbc6rt5rlcoog49js.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.viola.vintageviolet",
+            "certificate_hash": "0fcb56c05c467cb6a71415a6a0e629b0b8f71f08"
+          }
+        },
+        {
+          "client_id": "471124282212-9s4m574dd9rfogt4lghkaan2bng9757q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDR5QRvwQFSYDKeyB6PbIVJB8afddCdzDs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "471124282212-3jmmg1sg5q4a45dblmhee653j6pes0vj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
