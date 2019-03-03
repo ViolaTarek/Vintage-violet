@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -29,6 +30,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -40,35 +48,66 @@ public class MainActivity extends AppCompatActivity
     TextView userEmail;
     GoogleApiClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
+    MenuItem signing;
+    StorageReference storageRef;
+
+    FirebaseStorage storage;
+    StorageReference imagesRef;
+    StorageReference style1Ref;
+
+    ImageView style1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-        profile_pic = findViewById(R.id.profile_pic);
-        username = findViewById(R.id.userName_tv);
-        userEmail = findViewById(R.id.userEmail_tv);
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        profile_pic = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
+        username = navigationView.getHeaderView(0).findViewById(R.id.userName_tv);
+        userEmail = navigationView.getHeaderView(0).findViewById(R.id.userEmail_tv);
+
+        signing=navigationView.getMenu().getItem(0);
+        style1 =findViewById(R.id.style1);
+        FirebaseApp.initializeApp(this);
+
+        storageRef = storage.getInstance().getReference();
+        imagesRef = storageRef.child("home");
+        style1Ref = imagesRef.child("3.jpg");
+
+        Toast.makeText(this,"image url = "+style1Ref,Toast.LENGTH_LONG).show();
+
+        Glide.with(this).load(style1Ref).into(style1);
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
         mGoogleSignInClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,gso).build();
-    }
+                .enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
 
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+        if (acct != null) {
+            signIn();
+            signing.setTitle("Sign out");
+        }
+        else{
+            signing.setTitle("Sign In");
+        }
+
+
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -109,19 +148,30 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.sign_in) {
+           if(item.getTitle()=="Sign In"){
             signIn();
-            item.setVisible(false);
+           item.setTitle("Sign out");
+           }
+           else{
+               signOut();
+               item.setTitle("Sign In");
+
+           }
         }
 
             /*  else if (id == R.id.Summer) {
 
-        } else if (id == R.id.Autumn) {
+        }
+         else if (id == R.id.Autumn) {
 
-        } else if (id == R.id.Spring) {
+        }
+         else if (id == R.id.Spring) {
 
-        } else if (id == R.id.nav_share) {
+        }
+         else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        }
+         else if (id == R.id.nav_send) {
 
         }*/
 
@@ -133,7 +183,27 @@ public class MainActivity extends AppCompatActivity
     public void signIn(){
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleSignInClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
+        username.setVisibility(View.VISIBLE);
+        userEmail.setVisibility(View.VISIBLE);
+
     }
+
+    public void signOut(){
+        Auth.GoogleSignInApi.signOut(mGoogleSignInClient).setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(@NonNull Status status) {
+               Glide.with(getApplicationContext())
+                       .load(R.mipmap.ic_user)
+                       .into(profile_pic);
+               username.setVisibility(View.GONE);
+               userEmail.setVisibility(View.GONE);
+
+            }
+
+        });
+    }
+
+
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -144,7 +214,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RC_SIGN_IN){
+        if(requestCode==RC_SIGN_IN){
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
             if(result.isSuccess()){
@@ -152,10 +222,12 @@ public class MainActivity extends AppCompatActivity
                 String personPhoto = account.getPhotoUrl().toString();
                 String personEmail = account.getEmail();
                 String personName = account.getDisplayName();
-                Toast.makeText(this,"your email is : "+ personEmail,Toast.LENGTH_LONG).show();
-                Glide.with(this)
-                        .load(personPhoto)
-                        .into(profile_pic);
+                if(personPhoto!=null) {
+                    Glide.with(this)
+                            .load(personPhoto)
+                            .into(profile_pic);
+                }
+
                 userEmail.setText(personEmail);
                 username.setText(personName);
             }
