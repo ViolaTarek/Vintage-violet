@@ -1,5 +1,6 @@
 package com.example.viola.vintageviolet;
 
+import android.app.usage.NetworkStats;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -32,6 +34,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.storage.FirebaseStorage;
@@ -56,7 +59,7 @@ public class MainActivity extends AppCompatActivity
     StorageReference style1Ref;
 
     ImageView style1;
-
+    RecyclerView main_rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,22 +83,24 @@ public class MainActivity extends AppCompatActivity
         userEmail = navigationView.getHeaderView(0).findViewById(R.id.userEmail_tv);
 
         signing=navigationView.getMenu().getItem(0);
-        style1 =findViewById(R.id.style1);
+        style1 =findViewById(R.id.home_style_iv);
+        main_rv= findViewById(R.id.main_recycler_view);
+
         FirebaseApp.initializeApp(this);
 
-        storageRef = storage.getInstance().getReference();
+       /* storageRef = storage.getInstance().getReference();
         imagesRef = storageRef.child("home");
-        style1Ref = imagesRef.child("3.jpg");
+        style1Ref = imagesRef.child("3.jpg");*/
+        //Toast.makeText(this,"image url = "+style1Ref,Toast.LENGTH_LONG).show();
+        /*String bucket =storageRef.getBucket();*/
 
-        Toast.makeText(this,"image url = "+style1Ref,Toast.LENGTH_LONG).show();
-
-        Glide.with(this).load(style1Ref).into(style1);
+//        GlideApp.with(this).load(style1Ref).into(style1);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
         mGoogleSignInClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
+                        .enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (acct != null) {
@@ -104,10 +109,10 @@ public class MainActivity extends AppCompatActivity
         }
         else{
             signing.setTitle("Sign In");
+
+        }
         }
 
-
-    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -202,8 +207,6 @@ public class MainActivity extends AppCompatActivity
 
         });
     }
-
-
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
