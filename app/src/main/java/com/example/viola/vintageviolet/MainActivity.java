@@ -1,6 +1,7 @@
 package com.example.viola.vintageviolet;
 
 import android.app.usage.NetworkStats;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -19,11 +21,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -37,6 +41,12 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -52,22 +62,23 @@ public class MainActivity extends AppCompatActivity
     GoogleApiClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
     MenuItem signing;
-    StorageReference storageRef;
-
-    FirebaseStorage storage;
-    StorageReference imagesRef;
-    StorageReference style1Ref;
-
-    ImageView style1;
     RecyclerView main_rv;
+    DatabaseReference reference ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseApp.initializeApp(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        reference = FirebaseDatabase.getInstance().getReference().child("home");
+        main_rv= findViewById(R.id.main_recycler_view);
+        main_rv.setHasFixedSize(true);
+        main_rv.setLayoutManager(new LinearLayoutManager(this));
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -77,24 +88,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         profile_pic = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
         username = navigationView.getHeaderView(0).findViewById(R.id.userName_tv);
         userEmail = navigationView.getHeaderView(0).findViewById(R.id.userEmail_tv);
-
         signing=navigationView.getMenu().getItem(0);
-        style1 =findViewById(R.id.home_style_iv);
-        main_rv= findViewById(R.id.main_recycler_view);
-
-        FirebaseApp.initializeApp(this);
-
-       /* storageRef = storage.getInstance().getReference();
-        imagesRef = storageRef.child("home");
-        style1Ref = imagesRef.child("3.jpg");*/
-        //Toast.makeText(this,"image url = "+style1Ref,Toast.LENGTH_LONG).show();
-        /*String bucket =storageRef.getBucket();*/
-
-//        GlideApp.with(this).load(style1Ref).into(style1);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -112,6 +109,23 @@ public class MainActivity extends AppCompatActivity
 
         }
         }
+
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseRecyclerAdapter<homeStyle,homestyleViewHolder> firebaseRecyclerAdapter= new FirebaseRecyclerAdapter<homeStyle, homestyleViewHolder>
+                (homeStyle.class,R.layout.main_list_item,homestyleViewHolder.class,reference) {
+            @Override
+            protected void populateViewHolder(homestyleViewHolder viewHolder, homeStyle model, int position) {
+                viewHolder.setTitle(model.getDesc());
+                viewHolder.setImage(getApplicationContext(),model.getUrl());
+            }
+        };
+        main_rv.setAdapter(firebaseRecyclerAdapter);
+    }
 
     @Override
     public void onBackPressed() {
@@ -237,4 +251,26 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
+
+
+    public static class homestyleViewHolder extends RecyclerView.ViewHolder
+    {
+        View mview;
+
+        public homestyleViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mview=itemView;
+        }
+        public void setTitle(String title){
+        TextView title_tv = mview.findViewById(R.id.home_style_tv);
+        title_tv.setText(title);
+    }
+        public void setImage(Context context, String url){
+            ImageView home_style = mview.findViewById(R.id.home_style_iv);
+            Glide.with(context).load(url).into(home_style);
+    }
+
+
+    }
+
 }
