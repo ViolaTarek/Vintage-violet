@@ -4,14 +4,18 @@ import android.app.usage.NetworkStats;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,7 +59,7 @@ import com.google.firebase.storage.StorageReference;
 import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener , GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
     ImageView profile_pic;
     TextView username;
@@ -63,7 +68,7 @@ public class MainActivity extends AppCompatActivity
     private static final int RC_SIGN_IN = 9001;
     MenuItem signing;
     RecyclerView main_rv;
-    DatabaseReference reference ;
+    DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +80,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         reference = FirebaseDatabase.getInstance().getReference().child("home");
-        main_rv= findViewById(R.id.main_recycler_view);
+        main_rv = findViewById(R.id.main_recycler_view);
         main_rv.setHasFixedSize(true);
         main_rv.setLayoutManager(new LinearLayoutManager(this));
 
@@ -91,37 +96,35 @@ public class MainActivity extends AppCompatActivity
         profile_pic = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
         username = navigationView.getHeaderView(0).findViewById(R.id.userName_tv);
         userEmail = navigationView.getHeaderView(0).findViewById(R.id.userEmail_tv);
-        signing=navigationView.getMenu().getItem(0);
+        signing = navigationView.getMenu().getItem(0);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
         mGoogleSignInClient = new GoogleApiClient.Builder(this)
-                        .enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
+                .enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (acct != null) {
             signIn();
             signing.setTitle("Sign out");
-        }
-        else{
+        } else {
             signing.setTitle("Sign In");
 
         }
-        }
-
+    }
 
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        FirebaseRecyclerAdapter<homeStyle,homestyleViewHolder> firebaseRecyclerAdapter= new FirebaseRecyclerAdapter<homeStyle, homestyleViewHolder>
-                (homeStyle.class,R.layout.main_list_item,homestyleViewHolder.class,reference) {
+        FirebaseRecyclerAdapter<homeStyle, homestyleViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<homeStyle, homestyleViewHolder>
+                (homeStyle.class, R.layout.main_list_item, homestyleViewHolder.class, reference) {
             @Override
             protected void populateViewHolder(homestyleViewHolder viewHolder, homeStyle model, int position) {
                 viewHolder.setTitle(model.getDesc());
-                viewHolder.setImage(getApplicationContext(),model.getUrl());
+                viewHolder.setImage(getApplicationContext(), model.getUrl());
             }
         };
         main_rv.setAdapter(firebaseRecyclerAdapter);
@@ -165,41 +168,53 @@ public class MainActivity extends AppCompatActivity
 
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Bundle bundle = new Bundle();
+        stylesFragment myFrag = new stylesFragment();
+        LinearLayout layout= findViewById(R.id.content_main);
 
-        if (id == R.id.sign_in) {
-           if(item.getTitle()=="Sign In"){
-            signIn();
-           item.setTitle("Sign out");
-           }
-           else{
-               signOut();
-               item.setTitle("Sign In");
+        switch (id) {
+            case (R.id.sign_in):
+                if (item.getTitle() == "Sign In") {
+                    signIn();
+                    item.setTitle("Sign out");
+                } else {
+                    signOut();
+                    item.setTitle("Sign In");
+                }
+                break;
 
-           }
+            case (R.id.dress):
+                layout.setVisibility(View.GONE);
+                bundle.putString("category", "dress");
+                myFrag.setArguments(bundle);
+                break;
+
+            case (R.id.casual):
+                layout.setVisibility(View.GONE);
+                bundle.putString("category", "casual");
+                myFrag.setArguments(bundle);
+                break;
+
+            case (R.id.classy):
+                layout.setVisibility(View.GONE);
+                bundle.putString("category", "classy");
+                myFrag.setArguments(bundle);
+                break;
+
+            case (R.id.home):
+                layout.setVisibility(View.VISIBLE);
+                break;
         }
-
-            /*  else if (id == R.id.Summer) {
-
-        }
-         else if (id == R.id.Autumn) {
-
-        }
-         else if (id == R.id.Spring) {
-
-        }
-         else if (id == R.id.nav_share) {
-
-        }
-         else if (id == R.id.nav_send) {
-
-        }*/
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_main, myFrag);
+        transaction.commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    public void signIn(){
+    public void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleSignInClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
         username.setVisibility(View.VISIBLE);
@@ -207,15 +222,15 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void signOut(){
+    public void signOut() {
         Auth.GoogleSignInApi.signOut(mGoogleSignInClient).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(@NonNull Status status) {
-               Glide.with(getApplicationContext())
-                       .load(R.mipmap.ic_user)
-                       .into(profile_pic);
-               username.setVisibility(View.GONE);
-               userEmail.setVisibility(View.GONE);
+                Glide.with(getApplicationContext())
+                        .load(R.mipmap.ic_user)
+                        .into(profile_pic);
+                username.setVisibility(View.GONE);
+                userEmail.setVisibility(View.GONE);
 
             }
 
@@ -231,15 +246,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==RC_SIGN_IN){
+        if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
-            if(result.isSuccess()){
+            if (result.isSuccess()) {
                 GoogleSignInAccount account = result.getSignInAccount();
                 String personPhoto = account.getPhotoUrl().toString();
                 String personEmail = account.getEmail();
                 String personName = account.getDisplayName();
-                if(personPhoto!=null) {
+                if (personPhoto != null) {
                     Glide.with(this)
                             .load(personPhoto)
                             .into(profile_pic);
@@ -253,24 +268,26 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public static class homestyleViewHolder extends RecyclerView.ViewHolder
-    {
+    public static class homestyleViewHolder extends RecyclerView.ViewHolder {
         View mview;
 
         public homestyleViewHolder(@NonNull View itemView) {
             super(itemView);
-            mview=itemView;
+            mview = itemView;
         }
-        public void setTitle(String title){
-        TextView title_tv = mview.findViewById(R.id.home_style_tv);
-        title_tv.setText(title);
-    }
-        public void setImage(Context context, String url){
+
+        public void setTitle(String title) {
+            TextView title_tv = mview.findViewById(R.id.home_style_tv);
+            title_tv.setText(title);
+        }
+
+        public void setImage(Context context, String url) {
             ImageView home_style = mview.findViewById(R.id.home_style_iv);
             Glide.with(context).load(url).into(home_style);
-    }
+        }
 
 
     }
+
 
 }

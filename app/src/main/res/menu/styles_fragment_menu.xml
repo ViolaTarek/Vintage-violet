@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:checkableBehavior="all"
+        android:title="Choose Season">
+        <item
+            android:id="@+id/winter_item"
+            android:checkable="true"
+            android:icon="@drawable/ic_winter"
+            android:title="Winter" />
+        <item
+            android:id="@+id/spring_item"
+            android:checkable="true"
+            android:icon="@drawable/ic_spring"
+            android:title="Spring" />
+        <item
+            android:id="@+id/summer_item"
+            android:checkable="true"
+            android:icon="@drawable/ic_summer"
+            android:title="Summer" />
+        <item
+            android:id="@+id/autumn_item"
+            android:checkable="true"
+            android:icon="@drawable/ic_autumn"
+            android:title="Autumn" />
+    </group>
+</menu>
