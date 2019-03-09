@@ -67,23 +67,20 @@ public class MainActivity extends AppCompatActivity
     GoogleApiClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
     MenuItem signing;
-    RecyclerView main_rv;
-    DatabaseReference reference;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        homeFragment home = new homeFragment();
+        transaction.add(R.id.fragment_styles, home);
+        transaction.commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        reference = FirebaseDatabase.getInstance().getReference().child("home");
-        main_rv = findViewById(R.id.main_recycler_view);
-        main_rv.setHasFixedSize(true);
-        main_rv.setLayoutManager(new LinearLayoutManager(this));
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -93,6 +90,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         profile_pic = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
         username = navigationView.getHeaderView(0).findViewById(R.id.userName_tv);
         userEmail = navigationView.getHeaderView(0).findViewById(R.id.userEmail_tv);
@@ -116,21 +114,6 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        FirebaseRecyclerAdapter<homeStyle, homestyleViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<homeStyle, homestyleViewHolder>
-                (homeStyle.class, R.layout.main_list_item, homestyleViewHolder.class, reference) {
-            @Override
-            protected void populateViewHolder(homestyleViewHolder viewHolder, homeStyle model, int position) {
-                viewHolder.setTitle(model.getDesc());
-                viewHolder.setImage(getApplicationContext(), model.getUrl());
-            }
-        };
-        main_rv.setAdapter(firebaseRecyclerAdapter);
-    }
-
-    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -140,27 +123,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -170,8 +132,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         Bundle bundle = new Bundle();
         stylesFragment myFrag = new stylesFragment();
-        LinearLayout layout= findViewById(R.id.content_main);
-
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        homeFragment home = new homeFragment();
         switch (id) {
             case (R.id.sign_in):
                 if (item.getTitle() == "Sign In") {
@@ -184,30 +146,36 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case (R.id.dress):
-                layout.setVisibility(View.GONE);
                 bundle.putString("category", "dress");
                 myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
                 break;
 
             case (R.id.casual):
-                layout.setVisibility(View.GONE);
                 bundle.putString("category", "casual");
                 myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
                 break;
 
             case (R.id.classy):
-                layout.setVisibility(View.GONE);
                 bundle.putString("category", "classy");
                 myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
                 break;
 
-            case (R.id.home):
-                layout.setVisibility(View.VISIBLE);
+            case (R.id.home_nav):
+                transaction.replace(R.id.fragment_styles, home);
+                transaction.commit();
                 break;
+            default:
+                transaction.replace(R.id.fragment_styles, home);
+                transaction.commit();
+
         }
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_main, myFrag);
-        transaction.commit();
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -265,28 +233,6 @@ public class MainActivity extends AppCompatActivity
             }
 
         }
-    }
-
-
-    public static class homestyleViewHolder extends RecyclerView.ViewHolder {
-        View mview;
-
-        public homestyleViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mview = itemView;
-        }
-
-        public void setTitle(String title) {
-            TextView title_tv = mview.findViewById(R.id.home_style_tv);
-            title_tv.setText(title);
-        }
-
-        public void setImage(Context context, String url) {
-            ImageView home_style = mview.findViewById(R.id.home_style_iv);
-            Glide.with(context).load(url).into(home_style);
-        }
-
-
     }
 
 
