@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
@@ -59,24 +61,28 @@ import com.google.firebase.storage.StorageReference;
 import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, SwipeRefreshLayout.OnRefreshListener {
 
     ImageView profile_pic;
     TextView username;
     TextView userEmail;
+    String userID;
     GoogleApiClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
     MenuItem signing;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         FirebaseApp.initializeApp(this);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         homeFragment home = new homeFragment();
-        transaction.add(R.id.fragment_styles, home);
+        transaction.replace(R.id.fragment_styles, home);
         transaction.commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -99,6 +105,7 @@ public class MainActivity extends AppCompatActivity
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
+
         mGoogleSignInClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
 
@@ -107,9 +114,11 @@ public class MainActivity extends AppCompatActivity
             signIn();
             signing.setTitle("Sign out");
         } else {
+            userID = null;
             signing.setTitle("Sign In");
 
         }
+
     }
 
 
@@ -141,12 +150,14 @@ public class MainActivity extends AppCompatActivity
                     item.setTitle("Sign out");
                 } else {
                     signOut();
+                    userID = null;
                     item.setTitle("Sign In");
                 }
                 break;
 
             case (R.id.dress):
                 bundle.putString("category", "dress");
+                bundle.putString("userid", userID);
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
@@ -154,6 +165,7 @@ public class MainActivity extends AppCompatActivity
 
             case (R.id.casual):
                 bundle.putString("category", "casual");
+                bundle.putString("userid", userID);
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
@@ -161,18 +173,27 @@ public class MainActivity extends AppCompatActivity
 
             case (R.id.classy):
                 bundle.putString("category", "classy");
+                bundle.putString("userid", userID);
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
                 break;
 
             case (R.id.home_nav):
+                bundle.putString("userid", userID);
+                home.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, home);
                 transaction.commit();
                 break;
-            default:
-                transaction.replace(R.id.fragment_styles, home);
+            case (R.id.favorite_nav):
+                bundle.putString("userid", userID);
+                FavoriteFragment fav=new FavoriteFragment();
+                fav.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, fav);
                 transaction.commit();
+                break;
+            default:
+                return true;
 
         }
 
@@ -222,6 +243,9 @@ public class MainActivity extends AppCompatActivity
                 String personPhoto = account.getPhotoUrl().toString();
                 String personEmail = account.getEmail();
                 String personName = account.getDisplayName();
+                userID = account.getId();
+
+
                 if (personPhoto != null) {
                     Glide.with(this)
                             .load(personPhoto)
@@ -236,4 +260,9 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-}
+    @Override
+    public void onRefresh() {
+    }
+
+    }
+

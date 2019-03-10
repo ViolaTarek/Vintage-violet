@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/linear_layout"
+    android:fillViewport="true"
     >
 
 
@@ -38,6 +39,6 @@
         android:layout_alignEnd="@id/style_detail_iv"
         android:layout_alignRight="@id/style_detail_iv"
         android:layout_alignBottom="@id/style_detail_iv"
-        />
+         />
 
 </LinearLayout>

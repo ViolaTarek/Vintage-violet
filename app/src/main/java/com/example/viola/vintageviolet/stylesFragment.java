@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,7 +36,11 @@ public class stylesFragment extends Fragment {
     DatabaseReference reference;
     DatabaseReference childReference;
     DatabaseReference autumnReference, winterReference, springReference, summerReference;
+    String user_id;
+    String myStr;
 
+    private Parcelable savedRecyclerViewState;
+    private final String LIST_STATE = "recycler_state";
 
     public stylesFragment() {
         // Required empty public constructor
@@ -60,6 +66,7 @@ public class stylesFragment extends Fragment {
         winterReference = reference.child("winter");
         summerReference = reference.child("summer");
         springReference = reference.child("spring");
+
         mRecyclerView = RootView.findViewById(R.id.styles_rv);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -67,7 +74,8 @@ public class stylesFragment extends Fragment {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            String myStr = bundle.getString("category");
+            user_id = bundle.getString("userid");
+            myStr = bundle.getString("category");
             if (myStr == "dress") {
                 childReference = reference.child("dress");
             } else if (myStr == "casual") {
@@ -181,6 +189,7 @@ public class stylesFragment extends Fragment {
                         bundle.putInt("id", model.getId());
                         bundle.putString("url", model.getUrl());
                         bundle.putString("desc", model.getDesc());
+                        bundle.putString("userId", user_id);
                         Intent mIntent = new Intent(getContext(), styleDetailsActivity.class);
                         mIntent.putExtras(bundle);
                         startActivity(mIntent);
@@ -212,5 +221,19 @@ public class stylesFragment extends Fragment {
 
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        savedRecyclerViewState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable(LIST_STATE, savedRecyclerViewState);
 
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedRecyclerViewState = savedInstanceState.getParcelable(LIST_STATE);
+        }
+    }
 }

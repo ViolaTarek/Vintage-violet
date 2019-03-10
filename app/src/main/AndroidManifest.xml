@@ -3,7 +3,8 @@
     package="com.example.viola.vintageviolet">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -22,9 +23,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".styleDetailsActivity"
-            android:parentActivityName="com.example.viola.vintageviolet.MainActivity" >
-        ></activity>
+        <activity
+            android:name=".styleDetailsActivity"
+            android:parentActivityName=".MainActivity">
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.viola.vintageviolet.MainActivity" />
+        </activity>
+
+        <receiver android:name=".style_widget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/style_widget_info" />
+        </receiver>
     </application>
 
 </manifest>
