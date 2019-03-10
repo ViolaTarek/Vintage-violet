@@ -4,6 +4,26 @@ public class mainStyles {
     private String url;
     private String desc;
     private int id;
+    private String category;
+    private String season;
+
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
+    }
+
 
     public String getUrl() {
         return url;

@@ -71,8 +71,8 @@ public class MainActivity extends AppCompatActivity
     private static final int RC_SIGN_IN = 9001;
     MenuItem signing;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
-
+    String savedState;
+    DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +80,13 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         FirebaseApp.initializeApp(this);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        homeFragment home = new homeFragment();
-        transaction.replace(R.id.fragment_styles, home);
-        transaction.commit();
+
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            homeFragment home = new homeFragment();
+            transaction.replace(R.id.fragment_styles, home);
+            transaction.commit();
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -161,6 +164,7 @@ public class MainActivity extends AppCompatActivity
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
+                savedState = "styles";
                 break;
 
             case (R.id.casual):
@@ -169,6 +173,7 @@ public class MainActivity extends AppCompatActivity
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
+
                 break;
 
             case (R.id.classy):
@@ -177,20 +182,56 @@ public class MainActivity extends AppCompatActivity
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
-                break;
 
+                break;
+            case (R.id.autumn):
+                bundle.putString("category", "autumn");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                break;
+            case (R.id.winter):
+                bundle.putString("category", "winter");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                break;
+            case (R.id.summer):
+                bundle.putString("category", "summer");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                break;
+            case (R.id.spring):
+                bundle.putString("category", "spring");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                break;
             case (R.id.home_nav):
                 bundle.putString("userid", userID);
                 home.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, home);
                 transaction.commit();
+                savedState = "home";
+
                 break;
             case (R.id.favorite_nav):
-                bundle.putString("userid", userID);
-                FavoriteFragment fav=new FavoriteFragment();
-                fav.setArguments(bundle);
-                transaction.replace(R.id.fragment_styles, fav);
-                transaction.commit();
+                if (userID != null) {
+                    bundle.putString("userid", userID);
+                    FavoriteFragment fav = new FavoriteFragment();
+                    fav.setArguments(bundle);
+                    transaction.replace(R.id.fragment_styles, fav);
+                    transaction.commit();
+                } else {
+                    Toast.makeText(this, "Sign in to show your Styles", Toast.LENGTH_LONG).show();
+                }
+                savedState = "favorite";
+
                 break;
             default:
                 return true;
@@ -264,5 +305,5 @@ public class MainActivity extends AppCompatActivity
     public void onRefresh() {
     }
 
-    }
+}
 

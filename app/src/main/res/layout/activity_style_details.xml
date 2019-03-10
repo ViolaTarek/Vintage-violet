@@ -1,44 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/linear_layout"
-    android:fillViewport="true"
     >
 
-
-    <ImageView
-        android:id="@+id/style_detail_iv"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:layout_marginBottom="10dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <android.support.v7.widget.CardView
+            android:id="@+id/image_card_view"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_details_padding_title"
+            app:cardCornerRadius="@dimen/card_view_radius"
+            android:elevation="@dimen/card_view_elevation"
+            >
+            <ImageView
+                android:id="@+id/style_detail_iv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/style_detailed_iv_height"
+                android:layout_marginBottom="@dimen/list_item_margin" />
+        </android.support.v7.widget.CardView>
 
-        />
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:padding="8dp"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:textColor="@color/colorPrimaryDark"
-        />
+        <android.support.v7.widget.CardView
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_details_padding_title"
+            app:cardCornerRadius="@dimen/card_view_radius"
+            android:elevation="@dimen/card_view_elevation"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Details_season"
+                    android:textSize="@dimen/title_text_size"
+                    android:paddingTop="@dimen/text_details_padding_title"
+                    android:paddingLeft="@dimen/text_details_padding_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:fontFamily="sans-serif"
+                    android:id="@+id/text2"
+                    />
+                <TextView
+                    android:id="@+id/season"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/text_details_padding_desc"
+                    android:paddingBottom="@dimen/text_details_padding_desc"
+                    android:layout_marginLeft="@dimen/margin_left_detail"
+                    android:textSize="@dimen/desc_text_size"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:fontFamily="serif"
+                    android:layout_below="@+id/text2"
+                    />
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+        <android.support.v7.widget.CardView
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_details_padding_title"
+            app:cardCornerRadius="@dimen/card_view_radius"
+            android:elevation="@dimen/card_view_elevation"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Details_categ"
+                    android:textSize="@dimen/title_text_size"
+                    android:paddingTop="@dimen/text_details_padding_title"
+                    android:paddingLeft="@dimen/text_details_padding_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:fontFamily="sans-serif"
+                    android:id="@+id/text"
+                    />
+                <TextView
+                    android:id="@+id/category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/text_details_padding_desc"
+                    android:paddingBottom="@dimen/text_details_padding_desc"
+                    android:layout_marginLeft="@dimen/margin_left_detail"
+                    android:textSize="@dimen/desc_text_size"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:fontFamily="serif"
+                    android:layout_below="@+id/text"
+                    />
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_details_padding_title"
+            app:cardCornerRadius="@dimen/card_view_radius"
+            android:elevation="@dimen/card_view_elevation"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Details_desc"
+            android:textSize="@dimen/title_text_size"
+            android:paddingTop="@dimen/text_details_padding_title"
+            android:paddingLeft="@dimen/text_details_padding_title"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:fontFamily="sans-serif"
+            android:id="@+id/text1"
+            />
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/text_details_padding_desc"
+            android:paddingBottom="@dimen/text_details_padding_desc"
+            android:layout_marginLeft="@dimen/margin_left_detail"
+            android:textSize="@dimen/desc_text_size"
+            android:textColor="@color/colorPrimaryDark"
+            android:fontFamily="serif"
+            android:layout_below="@+id/text1"
+             />
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:src="@drawable/ic_favorite"
-        app:layout_anchorGravity="bottom|right|end"
-        app:backgroundTint="@color/colorPrimary"
-        android:layout_alignEnd="@id/style_detail_iv"
-        android:layout_alignRight="@id/style_detail_iv"
-        android:layout_alignBottom="@id/style_detail_iv"
-         />
+        app:layout_anchor="@id/image_card_view"
+        app:layout_anchorGravity="bottom|center|right"
 
-</LinearLayout>
+
+        />
+
+
+</android.support.design.widget.CoordinatorLayout>

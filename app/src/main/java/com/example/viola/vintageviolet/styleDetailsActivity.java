@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.preference.CheckBoxPreference;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ShareCompat;
@@ -43,28 +44,38 @@ public class styleDetailsActivity extends AppCompatActivity {
     String url;
     String description;
     String userId;
+    String season;
+    String category;
     DatabaseReference mDatabase;
-    LinearLayout linearLayout;
+    CoordinatorLayout linearLayout;
     Boolean isExist = false;
+    TextView seasonTV;
+    TextView categTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_style_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Paper.init(this);
 
         linearLayout = findViewById(R.id.linear_layout);
         iv = findViewById(R.id.style_detail_iv);
         desc = findViewById(R.id.description);
         favorite = findViewById(R.id.fab);
-
+        seasonTV= findViewById(R.id.season);
+        categTV = findViewById(R.id.category);
         Intent intent = getIntent();
         if (intent != null) {
             userId = intent.getExtras().getString("userId");
             url = intent.getExtras().getString("url");
             id = intent.getExtras().getInt("id");
+            season = intent.getExtras().getString("season");
+            category = intent.getExtras().getString("category");
             description = intent.getExtras().getString("desc");
             desc.setText(description);
+            categTV.setText(category);
+            seasonTV.setText(season);
             Glide.with(this).load(url).into(iv);
         }
         initializeFab();
@@ -80,6 +91,8 @@ public class styleDetailsActivity extends AppCompatActivity {
                         childRef.child("url").setValue(url);
                         childRef.child("id").setValue(id);
                         childRef.child("desc").setValue(description);
+                        childRef.child("category").setValue(category);
+                        childRef.child("season").setValue(season);
                         favorite.setImageResource(R.drawable.ic_favorite_filled);
                         Snackbar snackbar = Snackbar
                                 .make(linearLayout, "Added to favorite", Snackbar.LENGTH_LONG);
@@ -120,14 +133,12 @@ public class styleDetailsActivity extends AppCompatActivity {
                         .getIntent(), "Share"));
                 return true;
             case (R.id.save):
-                /*Bitmap bitmap = getBitmapFromURL(url);
-                MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "id", "");  // Saves the image.
-                Snackbar snackbar = Snackbar
-                        .make(linearLayout, "Image saved to gallery", Snackbar.LENGTH_LONG);
-                snackbar.show();*/
-                Paper.book().write("desc",description);
-                Paper.book().write("url",url);
 
+                Paper.book().write("desc", description);
+                Paper.book().write("url", url);
+                Snackbar snackbar = Snackbar
+                        .make(linearLayout, "Image saved to Widget", Snackbar.LENGTH_LONG);
+                snackbar.show();
                 return true;
             case (R.id.home):
                 finish();
@@ -138,21 +149,6 @@ public class styleDetailsActivity extends AppCompatActivity {
     }
 
 
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            // Log exception
-            return null;
-        }
-    }
-
     public void initializeFab() {
         if (userId != null) {
             DatabaseReference root = FirebaseDatabase.getInstance().getReference();
@@ -162,13 +158,9 @@ public class styleDetailsActivity extends AppCompatActivity {
                     if (snapshot.child("usersFavorite").child(userId).hasChild(String.valueOf(id))) {
                         favorite.setImageResource(R.drawable.ic_favorite_filled);
                     } else {
-                        Snackbar snackbar = Snackbar
-                                .make(linearLayout, "photo with id = " + id + " does not exist", Snackbar.LENGTH_LONG);
-                        snackbar.show();
                         favorite.setImageResource(R.drawable.ic_favorite);
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 

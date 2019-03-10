@@ -5,10 +5,15 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">vintage Violet</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Refresh</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+
+    <string name="Details_desc">Outfit details</string>
+    <string name="Details_season">Season</string>
+    <string name="Details_categ">Category</string>
+
+
 </resources>

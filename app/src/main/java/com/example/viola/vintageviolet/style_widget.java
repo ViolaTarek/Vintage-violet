@@ -10,8 +10,11 @@ import android.widget.RemoteViews;
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import io.paperdb.Paper;
+import retrofit2.http.Url;
 
 /**
  * Implementation of App Widget functionality.
@@ -28,8 +31,19 @@ public class style_widget extends AppWidgetProvider {
         String title = Paper.book().read("desc");
         String url = Paper.book().read("url");
 
-        // Construct the RemoteViews object
+
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.style_widget);
+        try {
+            Bitmap bitmap = Glide.with(context)
+                    .asBitmap()
+                    .load(url)
+                    .submit(512, 512)
+                    .get();
+
+            views.setImageViewBitmap(R.id.widget_iv, bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         views.setTextViewText(R.id.desc_widget_tv,title);
 
         // Instruct the widget manager to update the widget

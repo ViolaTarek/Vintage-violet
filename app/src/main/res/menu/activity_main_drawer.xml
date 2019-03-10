@@ -20,26 +20,50 @@
 
     <!-- text style menu's sub menu start from here -->
     <group
-        android:id="@+id/category_grp"
+        android:id="@+id/Category_grp"
         android:checkableBehavior="single"
         android:title="Choose Category"
         >
+    <item
+        android:id="@+id/dress"
+        android:icon="@drawable/ic_dress"
+        android:title="Dresses"
+        />
+    <item
+        android:id="@+id/classy"
+        android:icon="@drawable/ic_clasyy"
+        android:title="Classic Outfit"
+        />
+    <item
+        android:id="@+id/casual"
+        android:icon="@drawable/ic_casual"
+        android:title="Casual Outfit"
+        />
+</group>
+    <group
+        android:id="@+id/Season_grp"
+        android:checkableBehavior="single"
+        android:title="Choose Season"
+        >
         <item
-            android:id="@+id/dress"
-            android:icon="@drawable/ic_dress"
-            android:title="Dresses"
+            android:id="@+id/autumn"
+            android:icon="@drawable/ic_autumn"
+            android:title="Autumn"
             />
         <item
-            android:id="@+id/classy"
-            android:icon="@drawable/ic_clasyy"
-            android:title="Classic Outfit"
+            android:id="@+id/winter"
+            android:icon="@drawable/ic_winter"
+            android:title="Winter"
             />
         <item
-            android:id="@+id/casual"
-            android:icon="@drawable/ic_casual"
-            android:title="Casual Outfit"
+        android:id="@+id/spring"
+        android:icon="@drawable/ic_spring"
+        android:title="Spring"
+        />
+        <item
+            android:id="@+id/summer"
+            android:icon="@drawable/ic_summer"
+            android:title="Summer"
             />
     </group>
-
-
 </menu>

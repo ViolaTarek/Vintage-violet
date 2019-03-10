@@ -22,20 +22,18 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class stylesFragment extends Fragment {
 
     RecyclerView mRecyclerView;
-    boolean autumn_flag = false;
-    boolean summer_flag = false;
-    boolean spring_flag = false;
-    boolean winter_flag = false;
     DatabaseReference reference;
     DatabaseReference childReference;
-    DatabaseReference autumnReference, winterReference, springReference, summerReference;
     String user_id;
     String myStr;
 
@@ -50,7 +48,7 @@ public class stylesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+         setHasOptionsMenu(true);
 
 
     }
@@ -61,11 +59,6 @@ public class stylesFragment extends Fragment {
         // Inflate the layout for this fragment
         View RootView = inflater.inflate(R.layout.fragment_styles, container, false);
         reference = FirebaseDatabase.getInstance().getReference().child("styles");
-
-        autumnReference = reference.child("autumn");
-        winterReference = reference.child("winter");
-        summerReference = reference.child("summer");
-        springReference = reference.child("spring");
 
         mRecyclerView = RootView.findViewById(R.id.styles_rv);
         mRecyclerView.setHasFixedSize(true);
@@ -80,76 +73,44 @@ public class stylesFragment extends Fragment {
                 childReference = reference.child("dress");
             } else if (myStr == "casual") {
                 childReference = reference.child("casual");
-            } else {
+            } else if (myStr == "classy") {
                 childReference = reference.child("classy");
+            } else if (myStr == "winter") {
+                childReference = reference.child("winter");
+            } else if (myStr == "summer") {
+                childReference = reference.child("summer");
+            } else if (myStr == "spring") {
+                childReference = reference.child("spring");
+            } else if (myStr == "autumn") {
+                childReference = reference.child("autumn");
             }
         }
         return RootView;
 
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
 
-        inflater.inflate(R.menu.styles_fragment_menu, menu);
+        inflater.inflate(R.menu.main, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (id) {
-            case (R.id.autumn_item):
-                if (item.isChecked()) {
-                    // If item already checked then unchecked it
-                    item.setChecked(false);
-                    autumn_flag = false;
-                } else {
-                    // If item is unchecked then checked it
-                    item.setChecked(true);
-                    autumn_flag = true;
-                }
-            case (R.id.summer_item):
-                if (item.isChecked()) {
-                    // If item already checked then unchecked it
-                    item.setChecked(false);
-                    summer_flag = false;
-                } else {
-                    // If item is unchecked then checked it
-                    item.setChecked(true);
-                    summer_flag = true;
-                }
-                return true;
-            case (R.id.spring_item):
-                if (item.isChecked()) {
-                    // If item already checked then unchecked it
-                    item.setChecked(false);
-                    spring_flag = false;
-                } else {
-                    // If item is unchecked then checked it
-                    item.setChecked(true);
-                    spring_flag = true;
-                }
-                return true;
-            case (R.id.winter_item):
-                if (item.isChecked()) {
-                    // If item already checked then unchecked it
-                    item.setChecked(false);
-                    winter_flag = false;
-                } else {
-                    // If item is unchecked then checked it
-                    item.setChecked(true);
-                    winter_flag = true;
-                }
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
         }
+
+        return super.onOptionsItemSelected(item);
     }
-
-
     @Override
     public void onStart() {
         super.onStart();
@@ -162,25 +123,8 @@ public class stylesFragment extends Fragment {
             }
 
             @Override
-            protected void populateViewHolder(stylesViewHolder viewHolder, final mainStyles model, int position) {
-                /*if ((summer_flag)) {
-                    if ((summerReference.child("id")) == childReference.child("id")) {
-                        viewHolder.setImage(getContext(), model.getUrl());
-                    }
-                } else if ((winter_flag)) {
-                    if ((winterReference.child("id")) == childReference.child("id")) {
-                        viewHolder.setImage(getContext(), model.getUrl());
-                    }
-                } else if ((autumn_flag)) {
-                    if ((autumnReference.child("id")) == childReference.child("id")) {
-                        viewHolder.setImage(getContext(), model.getUrl());
-                    }
-                } else if ((spring_flag)) {
-                    if ((springReference.child("id")) == childReference.child("id")) {
-                        viewHolder.setImage(getContext(), model.getUrl());
-                    }
-                }
-                else*/
+            protected void populateViewHolder(final stylesViewHolder viewHolder, final mainStyles model, int position) {
+
                 viewHolder.setImage(getContext(), model.getUrl());
                 viewHolder.mview.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -189,6 +133,8 @@ public class stylesFragment extends Fragment {
                         bundle.putInt("id", model.getId());
                         bundle.putString("url", model.getUrl());
                         bundle.putString("desc", model.getDesc());
+                        bundle.putString("category", model.getCategory());
+                        bundle.putString("season", model.getSeason());
                         bundle.putString("userId", user_id);
                         Intent mIntent = new Intent(getContext(), styleDetailsActivity.class);
                         mIntent.putExtras(bundle);
@@ -209,7 +155,6 @@ public class stylesFragment extends Fragment {
         public stylesViewHolder(@NonNull View itemView) {
             super(itemView);
             mview = itemView;
-
 
         }
 
