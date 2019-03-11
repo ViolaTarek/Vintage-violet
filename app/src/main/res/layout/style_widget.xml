@@ -10,17 +10,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/widget_iv"
-            />
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/widget_image_cd" />
+
+        <TextView
             android:id="@+id/desc_widget_tv"
-            android:padding="16dp"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/main_list_item_padding" />
 
     </LinearLayout>
 </FrameLayout>

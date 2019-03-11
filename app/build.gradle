@@ -1,6 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'key0'
+            keyPassword 'veola911997'
+            storeFile file('‪C:/Users/Viola/Downloads/VintageViolet/keystore.jks')
+            storePassword 'veola911997'
+        }
+    }
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.viola.vintageviolet"
@@ -14,7 +23,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
+
     }
 }
 

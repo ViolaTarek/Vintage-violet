@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -24,15 +24,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".styleDetailsActivity"
-            android:parentActivityName=".MainActivity">
+            android:name=".activities.styleDetailsActivity"
+            android:parentActivityName=".activities.MainActivity">
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.viola.vintageviolet.MainActivity" />
+                android:value="com.example.viola.vintageviolet.activities.MainActivity" />
         </activity>
 
-        <receiver android:name=".style_widget">
+        <receiver android:name=".widget.style_widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

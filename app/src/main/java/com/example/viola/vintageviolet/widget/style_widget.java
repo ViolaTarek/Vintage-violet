@@ -1,20 +1,15 @@
-package com.example.viola.vintageviolet;
+package com.example.viola.vintageviolet.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.widget.RemoteViews;
 
 import com.bumptech.glide.Glide;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.example.viola.vintageviolet.R;
 
 import io.paperdb.Paper;
-import retrofit2.http.Url;
 
 /**
  * Implementation of App Widget functionality.
@@ -27,10 +22,8 @@ public class style_widget extends AppWidgetProvider {
                                 int appWidgetId) {
 
         Paper.init(context);
-
         String title = Paper.book().read("desc");
         String url = Paper.book().read("url");
-
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.style_widget);
         try {

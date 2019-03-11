@@ -24,4 +24,13 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="text_details_padding_desc">10dp</dimen>
     <dimen name="margin_left_detail">8dp</dimen>
 
+    <dimen name="fragment_home_padding">16dp</dimen>
+    <dimen name="margin_top_fragments">30dp</dimen>
+
+    <dimen name="main_list_item_padding">16dp</dimen>
+    <dimen name="main_list_item_margin">4dp</dimen>
+    <dimen name="list_item_text_size">16sp</dimen>
+
+    <dimen name="widget_style_info">110dp</dimen>
+
 </resources>

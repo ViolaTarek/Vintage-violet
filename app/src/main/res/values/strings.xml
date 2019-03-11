@@ -14,6 +14,29 @@
     <string name="Details_desc">Outfit details</string>
     <string name="Details_season">Season</string>
     <string name="Details_categ">Category</string>
+    <string name="sign_in">Sign In</string>
+    <string name="home">Home</string>
+    <string name="my_styles">My styles</string>
+    <string name="choose_category">Choose Category</string>
+    <string name="dress">Dresses</string>
+    <string name="classy">Classic outfit</string>
+    <string name="casual">Casual outfit</string>
+    <string name="summer">Summer outfits</string>
+    <string name="spring">Spring outfits</string>
+    <string name="winter">Winter outfits</string>
+    <string name="autumn">Autumn outfits</string>
+    <string name="choose_season">Choose season</string>
+    <string name="removed_from_fav">Removed from favorite</string>
+    <string name="added_to_fav">Added to favorite</string>
+    <string name="sign_in_toast">Sign in First to add to your styles</string>
+    <string name="sign_in_to_open_styles">Sign in to show your Styles</string>
+    <string name="image_save_to_fav">Image saved to Widget</string>
+
+    <string name="detail_style_content_description">large detailed image for style from styles database</string>
+    <string name="main_style_content_description">image for most important trick in fashion world</string>
+    <string name="style_list_item_cd">small image for style from styles database</string>
+    <string name="widget_image_cd">image get from application to widget</string>
+    <string name="favorite_image_cd">button to add image style to favorite</string>
 
 
 </resources>

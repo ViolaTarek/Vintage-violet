@@ -7,63 +7,54 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/sign_in"
-            android:title="Sign In" />
+            android:title="@string/sign_in" />
         <item
             android:id="@+id/home_nav"
             android:icon="@drawable/ic_home"
-            android:title="Home" />
+            android:title="@string/home" />
         <item
             android:id="@+id/favorite_nav"
             android:icon="@drawable/ic_favorite"
-            android:title="My Styles" />
+            android:title="@string/my_styles" />
     </group>
 
     <!-- text style menu's sub menu start from here -->
     <group
         android:id="@+id/Category_grp"
         android:checkableBehavior="single"
-        android:title="Choose Category"
-        >
-    <item
-        android:id="@+id/dress"
-        android:icon="@drawable/ic_dress"
-        android:title="Dresses"
-        />
-    <item
-        android:id="@+id/classy"
-        android:icon="@drawable/ic_clasyy"
-        android:title="Classic Outfit"
-        />
-    <item
-        android:id="@+id/casual"
-        android:icon="@drawable/ic_casual"
-        android:title="Casual Outfit"
-        />
-</group>
+        android:title="@string/choose_category">
+        <item
+            android:id="@+id/dress"
+            android:icon="@drawable/ic_dress"
+            android:title="@string/dress" />
+        <item
+            android:id="@+id/classy"
+            android:icon="@drawable/ic_clasyy"
+            android:title="@string/classy" />
+        <item
+            android:id="@+id/casual"
+            android:icon="@drawable/ic_casual"
+            android:title="@string/casual" />
+    </group>
     <group
         android:id="@+id/Season_grp"
         android:checkableBehavior="single"
-        android:title="Choose Season"
-        >
+        android:title="@string/choose_season">
         <item
             android:id="@+id/autumn"
             android:icon="@drawable/ic_autumn"
-            android:title="Autumn"
-            />
+            android:title="@string/autumn" />
         <item
             android:id="@+id/winter"
             android:icon="@drawable/ic_winter"
-            android:title="Winter"
-            />
+            android:title="@string/winter" />
         <item
-        android:id="@+id/spring"
-        android:icon="@drawable/ic_spring"
-        android:title="Spring"
-        />
+            android:id="@+id/spring"
+            android:icon="@drawable/ic_spring"
+            android:title="@string/spring" />
         <item
             android:id="@+id/summer"
             android:icon="@drawable/ic_summer"
-            android:title="Summer"
-            />
+            android:title="@string/summer" />
     </group>
 </menu>

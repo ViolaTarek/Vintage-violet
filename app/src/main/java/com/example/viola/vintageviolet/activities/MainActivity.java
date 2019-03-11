@@ -1,23 +1,11 @@
-package com.example.viola.vintageviolet;
+package com.example.viola.vintageviolet.activities;
 
-import android.app.usage.NetworkStats;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,40 +13,26 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.example.viola.vintageviolet.R;
+import com.example.viola.vintageviolet.fragments.FavoriteFragment;
+import com.example.viola.vintageviolet.fragments.homeFragment;
+import com.example.viola.vintageviolet.fragments.stylesFragment;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, SwipeRefreshLayout.OnRefreshListener {
@@ -70,9 +44,7 @@ public class MainActivity extends AppCompatActivity
     GoogleApiClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
     MenuItem signing;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    String savedState;
-    DatabaseReference reference;
+    String savedState = "home";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,30 +52,23 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         FirebaseApp.initializeApp(this);
-
-        if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            homeFragment home = new homeFragment();
-            transaction.replace(R.id.fragment_styles, home);
-            transaction.commit();
-        }
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         profile_pic = navigationView.getHeaderView(0).findViewById(R.id.profile_pic);
         username = navigationView.getHeaderView(0).findViewById(R.id.userName_tv);
         userEmail = navigationView.getHeaderView(0).findViewById(R.id.userEmail_tv);
         signing = navigationView.getMenu().getItem(0);
+
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -119,15 +84,23 @@ public class MainActivity extends AppCompatActivity
         } else {
             userID = null;
             signing.setTitle("Sign In");
-
         }
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            homeFragment home = new homeFragment();
+            transaction.replace(R.id.fragment_styles, home);
+            transaction.commit();
+
+
+        } else
+            changeState(savedInstanceState.getString("state"));
 
     }
 
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -138,7 +111,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -173,7 +146,7 @@ public class MainActivity extends AppCompatActivity
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
-
+                savedState = "casual";
                 break;
 
             case (R.id.classy):
@@ -182,7 +155,7 @@ public class MainActivity extends AppCompatActivity
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
-
+                savedState = "classy";
                 break;
             case (R.id.autumn):
                 bundle.putString("category", "autumn");
@@ -190,6 +163,7 @@ public class MainActivity extends AppCompatActivity
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
+                savedState = "autumn";
                 break;
             case (R.id.winter):
                 bundle.putString("category", "winter");
@@ -197,6 +171,7 @@ public class MainActivity extends AppCompatActivity
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
+                savedState = "winter";
                 break;
             case (R.id.summer):
                 bundle.putString("category", "summer");
@@ -204,6 +179,7 @@ public class MainActivity extends AppCompatActivity
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
+                savedState = "summer";
                 break;
             case (R.id.spring):
                 bundle.putString("category", "spring");
@@ -211,6 +187,7 @@ public class MainActivity extends AppCompatActivity
                 myFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_styles, myFrag);
                 transaction.commit();
+                savedState = "spring";
                 break;
             case (R.id.home_nav):
                 bundle.putString("userid", userID);
@@ -228,7 +205,7 @@ public class MainActivity extends AppCompatActivity
                     transaction.replace(R.id.fragment_styles, fav);
                     transaction.commit();
                 } else {
-                    Toast.makeText(this, "Sign in to show your Styles", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.sign_in_to_open_styles, Toast.LENGTH_LONG).show();
                 }
                 savedState = "favorite";
 
@@ -239,7 +216,7 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -267,11 +244,108 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    public void changeState(String state) {
+
+        Bundle bundle = new Bundle();
+        stylesFragment myFrag = new stylesFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        homeFragment home = new homeFragment();
+
+        switch (state) {
+            case "styles":
+                bundle.putString("category", "dress");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                savedState = "styles";
+                break;
+            case "casual":
+                bundle.putString("category", "casual");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                savedState = "casual";
+                break;
+            case "classy":
+                bundle.putString("category", "classy");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                savedState = "classy";
+
+                break;
+            case "autumn":
+                bundle.putString("category", "autumn");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                savedState = "autumn";
+
+                break;
+            case "winter":
+                bundle.putString("category", "winter");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                savedState = "winter";
+
+                break;
+            case "summer":
+                bundle.putString("category", "summer");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                savedState = "summer";
+
+                break;
+            case "spring":
+                bundle.putString("category", "spring");
+                bundle.putString("userid", userID);
+                myFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, myFrag);
+                transaction.commit();
+                savedState = "spring";
+
+                break;
+            case "home":
+                bundle.putString("userid", userID);
+                home.setArguments(bundle);
+                transaction.replace(R.id.fragment_styles, home);
+                transaction.commit();
+                savedState = "home";
+
+                break;
+            case "favorite":
+                if (userID != null) {
+                    bundle.putString("userid", userID);
+                    FavoriteFragment fav = new FavoriteFragment();
+                    fav.setArguments(bundle);
+                    transaction.replace(R.id.fragment_styles, fav);
+                    transaction.commit();
+                }
+                savedState = "favorite";
+
+                break;
+        }
+    }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("state", savedState);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -285,7 +359,6 @@ public class MainActivity extends AppCompatActivity
                 String personEmail = account.getEmail();
                 String personName = account.getDisplayName();
                 userID = account.getId();
-
 
                 if (personPhoto != null) {
                     Glide.with(this)
@@ -306,4 +379,3 @@ public class MainActivity extends AppCompatActivity
     }
 
 }
-

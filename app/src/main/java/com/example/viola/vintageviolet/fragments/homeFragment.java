@@ -1,7 +1,6 @@
-package com.example.viola.vintageviolet;
+package com.example.viola.vintageviolet.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -17,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.viola.vintageviolet.R;
+import com.example.viola.vintageviolet.models.homeStyle;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,9 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class homeFragment extends Fragment {
     RecyclerView main_rv;
     DatabaseReference reference;
-    public homeFragment() {
-        // Required empty public constructor
-    }
 
 
     @Override
@@ -39,7 +37,7 @@ public class homeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View RootView = inflater.inflate(R.layout.fragment_home, container, false);
@@ -51,6 +49,7 @@ public class homeFragment extends Fragment {
         main_rv.setLayoutManager(new LinearLayoutManager(getContext()));
         return RootView;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -66,6 +65,7 @@ public class homeFragment extends Fragment {
         };
         main_rv.setAdapter(firebaseRecyclerAdapter);
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.

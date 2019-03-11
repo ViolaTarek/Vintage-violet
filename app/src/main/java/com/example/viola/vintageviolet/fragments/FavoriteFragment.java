@@ -1,4 +1,4 @@
-package com.example.viola.vintageviolet;
+package com.example.viola.vintageviolet.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,18 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.viola.vintageviolet.R;
+import com.example.viola.vintageviolet.models.mainStyles;
+import com.example.viola.vintageviolet.activities.styleDetailsActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import javax.xml.transform.Templates;
 
 
 public class FavoriteFragment extends Fragment {
@@ -34,9 +30,6 @@ public class FavoriteFragment extends Fragment {
     DatabaseReference mChilddatabaseRef;
     DatabaseReference mDatabase;
     LinearLayout linearLayout;
-    public FavoriteFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,33 +46,19 @@ public class FavoriteFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             user_id = bundle.getString("userid");
-//            Toast.makeText(getContext(),"user id = "+user_id,Toast.LENGTH_LONG).show();
         }
         mRecyclerView = root.findViewById(R.id.styles_rv);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         if (user_id != null) {
-            mChilddatabaseRef=mDatabase.child("usersFavorite").child(user_id);
+            mChilddatabaseRef = mDatabase.child("usersFavorite").child(user_id);
 
-            /*mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.child("usersFavorite").hasChild(user_id)) {
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            });*/
-        }
-        else {
+        } else {
             Snackbar snackbar = Snackbar
-                    .make(linearLayout, "Make Sure to sign in", Snackbar.LENGTH_LONG);
+                    .make(linearLayout, R.string.sign_in_to_open_styles, Snackbar.LENGTH_LONG);
             snackbar.show();
         }
         return root;
@@ -108,6 +87,8 @@ public class FavoriteFragment extends Fragment {
                             bundle.putInt("id", model.getId());
                             bundle.putString("url", model.getUrl());
                             bundle.putString("desc", model.getDesc());
+                            bundle.putString("category", model.getCategory());
+                            bundle.putString("season", model.getSeason());
                             bundle.putString("userId", user_id);
                             Intent mIntent = new Intent(getContext(), styleDetailsActivity.class);
                             mIntent.putExtras(bundle);
@@ -118,8 +99,7 @@ public class FavoriteFragment extends Fragment {
             };
             mRecyclerView.setAdapter(firebaseRecyclerAdapter);
         }
-        }
-
+    }
 
 
     public static class favoriteViewHolder extends RecyclerView.ViewHolder {

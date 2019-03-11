@@ -1,4 +1,4 @@
-package com.example.viola.vintageviolet;
+package com.example.viola.vintageviolet.models;
 
 public class mainStyles {
     private String url;

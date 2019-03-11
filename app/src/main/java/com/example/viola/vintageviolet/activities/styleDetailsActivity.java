@@ -1,11 +1,7 @@
-package com.example.viola.vintageviolet;
+package com.example.viola.vintageviolet.activities;
 
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.preference.CheckBoxPreference;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -17,20 +13,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.viola.vintageviolet.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import io.paperdb.Paper;
 
@@ -63,8 +55,9 @@ public class styleDetailsActivity extends AppCompatActivity {
         iv = findViewById(R.id.style_detail_iv);
         desc = findViewById(R.id.description);
         favorite = findViewById(R.id.fab);
-        seasonTV= findViewById(R.id.season);
+        seasonTV = findViewById(R.id.season);
         categTV = findViewById(R.id.category);
+
         Intent intent = getIntent();
         if (intent != null) {
             userId = intent.getExtras().getString("userId");
@@ -86,34 +79,47 @@ public class styleDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (userId != null) {
-                    if (!styleIsExist()) {
-                        DatabaseReference childRef = mDatabase.child("usersFavorite").child(userId).child(String.valueOf(id));
-                        childRef.child("url").setValue(url);
-                        childRef.child("id").setValue(id);
-                        childRef.child("desc").setValue(description);
-                        childRef.child("category").setValue(category);
-                        childRef.child("season").setValue(season);
-                        favorite.setImageResource(R.drawable.ic_favorite_filled);
-                        Snackbar snackbar = Snackbar
-                                .make(linearLayout, "Added to favorite", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    } else {
-                        DatabaseReference childRef = mDatabase.child("usersFavorite").child(userId).child(String.valueOf(id));
-                        childRef.removeValue();
-                        favorite.setImageResource(R.drawable.ic_favorite);
-                        Snackbar snackbar = Snackbar
-                                .make(linearLayout, "Removed from favorite", Snackbar.LENGTH_LONG);
-                        snackbar.show();
 
-                    }
+                    styleIsExist(new StyleFetchingListener() {
+                        @Override
+                        public void onStyleFound() {
+                            DatabaseReference childRef = mDatabase.child("usersFavorite").child(userId).child(String.valueOf(id));
+                            childRef.removeValue();
+                            favorite.setImageResource(R.drawable.ic_favorite);
+                            Snackbar snackbar = Snackbar
+                                    .make(linearLayout, R.string.removed_from_fav, Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
+
+                        @Override
+                        public void onStyleNotFound() {
+                            DatabaseReference childRef = mDatabase.child("usersFavorite").child(userId).child(String.valueOf(id));
+                            childRef.child("url").setValue(url);
+                            childRef.child("id").setValue(id);
+                            childRef.child("desc").setValue(description);
+                            childRef.child("category").setValue(category);
+                            childRef.child("season").setValue(season);
+                            favorite.setImageResource(R.drawable.ic_favorite_filled);
+                            Snackbar snackbar = Snackbar
+                                    .make(linearLayout, R.string.added_to_fav, Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
+                    });
+
                 } else {
                     Snackbar snackbar = Snackbar
-                            .make(linearLayout, "Sign in First to add to your styles", Snackbar.LENGTH_LONG);
+                            .make(linearLayout, R.string.sign_in_toast, Snackbar.LENGTH_LONG);
                     snackbar.show();
                 }
             }
         });
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override
@@ -137,11 +143,11 @@ public class styleDetailsActivity extends AppCompatActivity {
                 Paper.book().write("desc", description);
                 Paper.book().write("url", url);
                 Snackbar snackbar = Snackbar
-                        .make(linearLayout, "Image saved to Widget", Snackbar.LENGTH_LONG);
+                        .make(linearLayout, R.string.image_save_to_fav, Snackbar.LENGTH_LONG);
                 snackbar.show();
                 return true;
             case (R.id.home):
-                finish();
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -154,13 +160,14 @@ public class styleDetailsActivity extends AppCompatActivity {
             DatabaseReference root = FirebaseDatabase.getInstance().getReference();
             root.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot snapshot) {
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.child("usersFavorite").child(userId).hasChild(String.valueOf(id))) {
                         favorite.setImageResource(R.drawable.ic_favorite_filled);
                     } else {
                         favorite.setImageResource(R.drawable.ic_favorite);
                     }
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -169,15 +176,15 @@ public class styleDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public boolean styleIsExist() {
+    public boolean styleIsExist(final StyleFetchingListener listener) {
         DatabaseReference root = FirebaseDatabase.getInstance().getReference();
         root.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.child("usersFavorite").child(userId).hasChild(String.valueOf(id))) {
-                    isExist = true;
+                    listener.onStyleFound();
                 } else {
-                    isExist = false;
+                    listener.onStyleNotFound();
                 }
             }
 
@@ -188,5 +195,11 @@ public class styleDetailsActivity extends AppCompatActivity {
         });
 
         return isExist;
+    }
+
+    interface StyleFetchingListener {
+        void onStyleFound();
+
+        void onStyleNotFound();
     }
 }
